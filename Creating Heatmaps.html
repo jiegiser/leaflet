@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>通过genjson进行绘制图形</title>
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <!-- 使用 Leaflet.heat插件-->
+    <script src="leaflet-heat.js"></script>
+    <script src="laglat.js"></script>
+    <style>
+        body {
+            border: 0px;
+            padding: 0px;
+        }
+
+        #mapCon {
+            width: 1200px;
+            height: 900px;
+        }
+    </style>
+</head>
+
+<body>
+    <button style="margin-left: 200px;" onclick="add()">添加数据集</button>
+    <div id="mapCon">
+
+    </div>
+    <script>
+        let map = L.map('mapCon').setView([35.1555, -106.591838], 8);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // // 使用Leaflet.heat插件创建热力图
+        var points = [
+            [35.1555, -106.591838, "<img src = 'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png'>"],
+            [35.0931, -106.664177, "<img src = 'http://pic.yupoo.com/jiegiser/3d80587d/1ecba738.png'>"],
+            [35.1143, -106.577991, "<img src = 'http://farm2.staticflickr.com/1416/908720823_e390a242f4.jpg'>"]
+        ];
+        const heat = L.heatLayer(points, {
+            // radius:25
+            // 模糊将点合并在一起或不合并。 较低的模糊值将创建单独的点，
+            // 而较高的数字将使点相互合并并且看起来更流畅。 模糊太多，你会洗掉你的积分
+            // https://github.com/Leaflet/Leaflet.heat
+            blur: 15
+        }).addTo(map);
+        // // 使用addLatLng() 将数据附加到地图
+        // heat.addLatLng([35,-106]);
+        // console.log(heat);
+
+
+        /*
+        如果要在单个地图上显示多个数据集，可以编写自定义函数以添加另一个集合。 
+        以下代码添加了一个数据集。 您需要使用其他数据集填充newPoints变量：
+        **/
+
+        // 名为newPoints的数据集将添加到地图中，并删除旧的数据集点。
+        // function add() {
+        //     heat.setLatLngs(addressPoints);
+        //     //    map.fitBounds(heat.getBounds());
+        //     map.setView([-37.8209458667, 175.2214051333], 2)
+        // }
+        //    heat.setLatLngs(addressPoints);
+
+
+
+        // 2018.12.20
+        // 添加marker到热力图中
+        for(let i=0;i<points.length;i++){
+            L.marker([parseFloat(points[i][0]),parseFloat(points[i][1])],{
+                opacity:0
+            }).bindPopup(points[i][2],{
+                keepInView:true
+            }).addTo(map);
+        }
+
+
+
+
+
+
+
+
+
+
+
+        // 下面的代码是直接边绘制，边进行将点数据加载到热力图中
+        // var map = L.map('mapCon').setView([-37.82109, 175.2193], 16);
+
+        // var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        // }).addTo(map);
+
+        // addressPoints = addressPoints.map(function (p) {
+        //     return [p[0], p[1]];
+        // });
+
+        // var heat = L.heatLayer(addressPoints).addTo(map),
+        //     draw = true;
+
+        // map.on({
+        //     movestart: function () {
+        //         draw = false;
+        //     },
+        //     moveend: function () {
+        //         draw = true;
+        //     },
+        //     mousemove: function (e) {
+        //         if (draw) {
+        //             heat.addLatLng(e.latlng);
+        //         }
+        //     }
+        // })
+    </script>
+</body>
+
+</html>

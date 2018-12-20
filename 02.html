@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>通过genjson进行绘制图形</title>
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <!-- 引入 stamen 的瓦片服务-->
+    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.4"></script>
+    <style>
+        body {
+            border: 0px;
+            padding: 0px;
+        }
+
+        #mapCon {
+            width: 1200px;
+            height: 900px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mapCon">
+
+    </div>
+    <script>
+        // const map = new L.map("mapCon").setView([113.41, 29.58], 11);
+        const map = new L.map("mapCon").setView([35.10418, -106.62987], 8);
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // let geojson = [{
+        //         "type": "Feature",
+        //         "geometry": {
+        //             "type": "Point",
+        //             "coordinates": [-106.629, 36.104]
+        //         },
+        //         "properties": {
+        //             "name": "my Point",
+        //             "title": "a point at the Big I"
+        //         }
+        //     },
+        //     {
+        //         "type": "Feature",
+        //         "geometry": {
+        //             "type": "Point",
+        //             "coordinates": [-106, 35]
+        //         },
+        //         // 描述
+        //         "properties": {
+        //             "name": "my Other Point",
+        //             "title": "A Point near Moriarty and I 40"
+        //         }
+        //     }
+        // ];
+        // 这里需要注意的是，我们在设置显示的经纬度是是（纬度，经度），而在geojson格式中是（经度，纬度）
+        // const geoJsonLayer=L.geoJson(geojson).addTo(map);
+        // 设置地图全屏显示layers的范围；（可以通过这个函数实现缩放至）
+        // map.fitBounds(geoJsonLayer.getBounds());
+
+        // 使用其他瓦片地图服务
+
+
+        // 1. Thunderforest
+        // 加载Thunderforest的瓦片服务https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=<12c17d20d720471a82b9519ae05e27f8>
+        // const layer=new L.TitleLayer('hhttps://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=12c17d20d720471a82b9519ae05e27f8');
+        // map.addLayer(layer);
+        // map.fitBounds(layer.getBounds());  
+
+        // 2. Stamen 
+        // 加载Stamen 的瓦片服务
+        // 首先需要引入javascript（有点麻烦）
+        // const layer=new L.StamenTileLayer("watercolor");
+        // map.addLayer(layer);
+        // 这里需要注意的是StamenTileLayer这个没有getBounds方法
+        // map.fitBounds(layer.getBounds());
+
+
+        // 加载卫星影像，注意这里，不需要new图层，以及这里的tileLayer为
+        const usgs =
+            L.tileLayer.wms("http://basemap.nationalmap.gov/ArcGIS/services/USGSImageryTopo/MapServer/WMSServer", {
+                layers: '0', //层名
+                format: 'image/png', //显示格式
+                transparent: true, //透明度
+                // 这里的属性也可以是一个链接
+                // attribution: "USGS" //设置layer来源
+                attribution: "<a href='http://basemap.nationalmap.gov/arcgis/rest/services'>USGS</a>"
+            }).addTo(map);
+        //     // 这里同样也要注意的是没有getBounds()方法
+        // map.fitBounds(usgs.getBounds());
+
+
+        // Multiple tile layers 2018.12.18
+        // const nexrad=L.tileLayer.wms("http://nowcoast.noaa.gov/wms/com.esri.wms.Esrimap/obs",{
+        //     layers:'RAS_RIDGE_NEXRAD',
+        //     format:'image/png',
+        //     transparent:true,//如果将透明度设置为false，则允许图层在整个地图上绘制。没有数据的区域显示为白色方块并覆盖卫星图像在下面;
+        //     // 一般情况下，我们将透明度设置为true
+        //     attribution:"NOAA/NWS",
+        // }).addTo(map);
+
+
+
+        // 添加数据到地图中,只需要将我们添加的瓦片的透明度设置为true就可以了；
+
+        // 添加marker标记
+        // const myMarker = L.marker([35.10418, -106.62987], {
+        //     // marker有很多属性以及方法，
+        //     title: 'MyPoint', //主要是鼠标悬停在标记上，提示信息
+        //     alt: 'The Big I', //使用屏幕阅读器读取的替代文本以获取辅助功能
+        //     draggable: true //允许通过鼠标进行拖动图标
+        // }).addTo(map);
+        // map.fitBounts(myMarker.getBounts());
+
+        // 添加折线
+        // const polyline = L.polyline(
+        //     [
+        //         [35.10418, -106.62987],
+        //         [35.19738, -106.875],
+        //         [35.07946, -106.80634]
+        //     ], //折线的经纬度
+        //     {
+        //         color: 'red', //折线的颜色
+        //         weight: 8 //这显得宽
+        //     }
+        // ).addTo(map);
+        // 需要注意的是这里的polyline没有getBounts方法
+        // map.fitBounts(polyline.getBounts());
+
+
+        // 添加多边形
+        // 多边形不同于折线的是，他是自动闭合的折线，不需要再用坐标对来进行闭合,使用polygon
+        // const polygon = L.polygon([
+        //     [35.10418, -106.62987],
+        //     [35.19738, -106.875],
+        //     [35.07956, -106.80634]
+        // ], {
+        //     color: 'blue',
+        //     weight: 8,
+        //     fillColor: 'red',
+        //     fillOpacity: 1 //不透明度是介于0和1之间的值，其中0表示100％不透明度，1表示不透明度（实体）。
+        // }).addTo(map);
+        // 需要注意的是这里的polygon没有getBounts方法
+        // map.fitBounts(polygon.getBounts());
+
+
+        //polyline与 polygon 都是继承了path类； 
+
+
+        // 创建一个矩形，有矩形rectangle类,他是扩展了polygon类，继承了polygon所有的属性以及方法
+        // const myRectangle = L.rectangle([
+        //     [35.19738, -106.875],
+        //     [35.10418, -106.62987]
+        // ], {
+        //     color: 'red',
+        //     weight: 8,
+        //     fillColor: 'blue'
+        // }).addTo(map);
+
+
+        // 创建一个圆，他是继承了path 类
+        // 数组中，第一个参数为圆心点坐标，第二个为半径
+        // const mycircle = L.circle([35.10418, -106.62978], 8046.72, {
+        //     color: 'red',
+        //     weight: 8,
+        //     fillColor: 'blue'
+        // }).addTo(map);
+
+
+        // 添加多条折线
+        // var multipolyline = L.polyline([ //在以前的版本中有multipolyline对象用于画多个折线，但是现在只需要传进多个折线数组，就可以实现在页面中画多个折线
+        //     // 折线1
+        //     [
+        //         [35.10418, -106.62987],
+        //         [35.19738, -106.875],
+        //         [35.07946, -106.80634]
+        //     ],
+        //     // 折线2
+        //     [
+        //         [35.11654, -106.58318],
+        //         [35.13142, -106.48876],
+        //         [35.07384, -106.52412]
+        //     ]
+        // ], {
+        //     color: 'red',
+        //     weight: 8
+        // }).addTo(map);
+
+        // // 创建多个多边形
+        // var multipolygon = L.polygon([//同样在以前的api通过multiPolygon来创建多个多边形，现在只需要传入一个数组
+        //     [
+        //         [35.10418, -106.62987],
+        //         [35.19738, -106.875],
+        //         [35.07946, -106.80634]
+        //     ],
+        //     [
+        //         [35.11654, -106.58318],
+        //         [35.13142, -106.48876],
+        //         [35.07384, -106.52412]
+        //     ]
+        // ], {
+        //     color: 'red',
+        //     weight: 8
+        // }).addTo(map).bindPopup("We are the same layer");
+
+        // GeoJSON中的多个几何
+        // 这里需要注意的是在geojson中画多边形,需要我们第一个点与最后一个点一样,进行手动闭合多边形.
+        let mygeojson = [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-106.62987, 35.10418]
+            },
+            "properties": {
+                "name": "My Point",
+                "title": "A point at the Big I"
+            }
+        }, {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [-106.67999, 35.14097],
+                    [-106.68892, 35.12974],
+                    [-106.69064, 35.1098]
+                ]
+            },
+            "properties": {
+                "name": "My LineString",
+                "title": "A line along the Rio Grande"
+            }
+        }, {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-106.78059, 35.14574],
+                        [-106.7799, 35.10559],
+                        [-106.71467, 35.13704],
+                        [-106.69716, 35.17942],
+                        [-106.78059, 35.14574]
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "My Polygon",
+                "title": "Balloon Fiesta Park"
+            }
+        }];
+        // const geoJsonLayer=L.geoJson(mygeojson).addTo(map);
+
+
+        // 创建一个带洞的多边形
+        // 在前面的代码中，第一组点创建了一个四边形多边形。
+        //  第二组点 - 下一级缩进 - 在第一个多边形的中间创建一个四边形多边形。 
+        // let myGeojson = [{
+        //     "type": "Feature",
+        //     "geometry": {
+        //         "type": "Polygon",
+        //         "coordinates": [
+        //             [
+        //                 [-106.875, 35.20074],
+        //                 [-106.82281, 34.9895],
+        //                 [-106.50146, 35.00525],
+        //                 [-106.47949, 35.1985],
+        //                 [-106.875, 35.20074]
+        //             ],
+        //             [
+        //                 [-106.6745, 35.1463],
+        //                 [-106.70403, 35.05192],
+        //                 [-106.55296, 35.05979],
+        //                 [-106.53854, 35.17212],
+        //                 [-106.6745, 35.1463]
+        //             ]
+        //         ]
+        //     },
+        //     "properties": {
+        //         "name": "My Polygon with a hole",
+        //         "title": "Donut"
+        //     }
+        // }];
+        // // 前面屏幕截图中多边形的中间是空心的。 如果向多边形添加弹出窗口，则只有在单击蓝色圆环时才会打开。
+        // const myGeojsonLayer=L.geoJson(myGeojson).addTo(map).bindPopup("We are the same layer");
+
+
+
+        // leaflet中将几何对象转换为geojson格式
+        // const myMarker=L.marker([35.10418,-106.62987]);
+        // const markerAsGsoJson=myMarker.toGeoJSON();
+        // console.log(markerAsGsoJson);
+        // console.log(typeof(markerAsGsoJson));//一个object
+        // const geoJsonLayer=L.geoJson(markerAsGsoJson).addTo(map);
+
+
+        // 使用style选项设置GeoJSON图层的样式
+        // function styleFunction(feature){
+        //     console.log(feature.geometry.type);
+        //     switch(feature.geometry.type){
+        //         case 'LineString':
+        //         return {
+        //             color:'red'
+        //         };
+        //         break;
+        //         case 'Polygon':
+        //         return {
+        //             color:'purple'
+        //         };
+        //         break;
+        //     }
+        // }
+        // const geoJsonLayer=L.geoJson(mygeojson,{
+        //     style:styleFunction
+        // }).addTo(map);
+
+
+        // setStyle（）方法允许您在应用一个样式或使用事件后更改样式。
+        // 以下代码显示事件如何调用setStyle（）方法来更新GeoJSON图层的颜色
+        // function SetStyle(){
+        //     return {
+        //         color: 'purple'
+        //     };
+        // }
+        // function newSytle(e){
+        //     // console.log(e);
+        //     // 通过setStyle来进行设置样式，setStyle根据path选项进行设置样式
+        //     geoJsonLayer.setStyle({color:'green'});
+        // }
+        // const geoJsonLayer=L.geoJson(mygeojson,{
+        //     style:SetStyle
+        // }).addTo(map);
+        // // 鼠标移动到图形，设置样式
+        // geoJsonLayer.on('mouseover',newSytle);
+        // geoJsonLayer.on('mouseout',(e)=>{
+        //     console.log(e);
+        //     console.log(e.target);
+        //     // 注意，这里是传入e.layer来进行重置样式
+        //     geoJsonLayer.resetStyle(e.layer);
+        // });
+
+        //下面也是设置图形的样式，不过跟上面不同的是，下面的方法可以设置所有的图形的样式 
+        // function styleFunction(){
+        //     return{
+        //         color:'purple',
+        //     }
+        // }
+        // function newStyle(){
+        //     geoJsonLayer.setStyle({
+        //         color:'green'
+        //     });
+        // }
+        // function oldStyle(){
+        //     geoJsonLayer.setStyle({
+        //         color:'purple'
+        //     });
+        // }
+        // const geoJsonLayer=L.geoJson(mygeojson,{
+        //     style:styleFunction,
+        //     // 在创建和设置样式后，将为每个创建的要素调用一次的函数。用于将事件和弹出窗口附加到要素。
+        //     onEachFeature:(feature,layer)=>{
+        //         // console.log(feature);
+        //         // console.log(layer);
+        //         // console.log(feature.properties.title);
+        //         layer.bindPopup(feature.properties.title);
+        //     }
+        // }).addTo(map);
+        // geoJsonLayer.on('mouseover',newStyle);
+        // geoJsonLayer.on('mouseout',oldStyle);
+
+
+
+
+        //  使用pointToLayer创建点图层
+        let options = {
+            draggable: false,
+            title: 'A Ppoint near Moriarty and I40'
+        };
+        let x;
+        let y;
+        /*
+        第一个case语句在创建标记时添加了属性信息。第二个case语句传递带有样式信息的JSON变量。
+        两者都有效，因此如果您想要应用于所有功能的样式，
+        可以在变量中编写一次，并在创建标记期间调用它。因为代码将图层分配给变量x和y，
+        所以可以使用map.removeLayer（x）添加或删除图层。
+        */
+        // L.geoJson(mygeojson,{
+        //     // 使用与获取所有点的对象
+        //     pointToLayer:(feature,latlng)=>{
+        //         console.log(feature.properties.name);
+        //         // 获取点的经纬度
+        //         console.log(latlng);
+        //         switch(feature.properties.name){
+        //             case 'My Other Point':
+        //             x=L.marker(latlng,{
+        //                 draggable:true,
+        //                 title:'A point at the Big I哈哈哈哈哈'
+        //             }).bindPopup(feature.properties.name);
+        //             return x;
+        //             case 'My Point':
+        //             y=L.marker(latlng,options).bindPopup(feature.properties.name);
+        //             return y;
+        //         }
+        //     }
+        // }).addTo(map);
+
+
+
+
+        // 使用过滤器显示数据子集  filter用法
+        /**
+        有时可能会从外部源加载GeoJSON，并且您不希望显示数据中的所有功能。
+        过滤将允许您不根据您设置的条件显示某些功能。修改前一个点对层示例中的case语句，
+        您将学习如何根据要素的名称过滤数据。以下代码显示了如何执行此操作：
+        */
+        L.geoJson(mygeojson, {
+            filter: (feature, latlng) => {
+                switch (feature.properties.name) {
+                    case 'My Point':
+                        return true; //如果为true则进行显示。
+                    case 'My Other Point':
+                        return false;
+                }
+            },
+            // 使用与获取所有点的对象
+            pointToLayer: (feature, latlng) => {
+                console.log(feature.properties.name);
+                // 获取点的经纬度
+                console.log(latlng);
+                switch (feature.properties.name) {
+                    case 'My Other Point':
+                        x = L.marker(latlng, {
+                            draggable: true,
+                            title: 'A point at the Big I哈哈哈哈哈'
+                        }).bindPopup(feature.properties.name);
+                        return x;
+                    case 'My Point':
+                        y = L.marker(latlng, options).bindPopup(feature.properties.name);
+                        return y;
+                }
+            }
+        }).addTo(map);
+    </script>
+</body>
+
+</html>

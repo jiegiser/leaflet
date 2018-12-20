@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Creating heatmaps with heatmap.js</title>
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <!-- 引入 heatmap.js和heatmap-Leaflet-->
+    <script src="heatmap.js"></script>
+    <script src="leaflet-heatmap.js"></script>
+
+    <!-- 引入data数据 -->
+    <script src="data.js"></script>
+    <style>
+        #mapCon {
+            width: 800px;
+            height: 500px;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+
+        .legend {
+            text-align: left;
+            line-height: 18px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        /* .leaflet-container {
+            background: rgba(0, 0, 0, .8) !important;
+        } */
+    </style>
+</head>
+
+<body>
+    <button onclick="total()">Total</button>
+    <button onclick="density()">Water/Land</button>
+    <div id="mapCon">
+
+    </div>
+    <script>
+        // let myData = {
+        //     max: 46,
+        //     data: [{
+        //         lat: 33.5363,
+        //         lng: -117.044,
+        //         value: 1
+        //     }, {
+        //         lat: 33.5608,
+        //         lng: -117.24,
+        //         value: 1
+        //     }]
+        // };
+        // // const cfg=({
+        // //     radius:20,
+        // //     opacity:0.8,
+        // //     gradient:{
+        // //         0.45:"rgb(0,0,255)",
+        // //         0.55:"rgb(0,255,255)",
+        // //         0.65:"rgb(255,255,0)",
+        // //         1.0:"rgb(255,0,0)"
+        // //     }
+        // // });
+
+        // const cfg = {
+        //     // 如果scaleRadius为true（或预期小半径），则半径应该很小
+        //     "radius": 1,
+        //     "maxOpacity": .8,
+        //     // 根据地图缩放比例缩放半径
+        //     "scaleRadius": true,
+        //     // 如果设置为false，则热图使用全局最大值进行着色
+        //     // 如果激活：使用当前地图边界内的最大数据 
+        //     //   (useLocalExtremas为true时，总会有一个红点)
+        //     "useLocalExtrema": true,
+        //     //数据中的哪个字段名称代表纬度 - 默认为“lat”"
+        //     latField: 'lat',
+        //     // 数据中的哪个字段名称代表经度 - 默认为“lng”
+        //     lngField: 'lng',
+        //     // 数据中的哪个字段名称表示数据值 - 默认值“value”
+        //     valueField: 'value'
+        // }
+        // const heatmapLayer = new HeatmapOverlay(cfg);
+        // const baseLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
+        // heatmapLayer.addData(myData.data);
+        // const map = new L.Map('mapCon', {
+        //     center: new L.LatLng(35, -106),
+        //     zoom: 12,
+        //     layers: [baseLayer, heatmapLayer]
+        // })
+        // // 调试可以访问
+        // layer = heatmapLayer;
+        // console.log(layer);
+
+        // // 往我们的mydata数据中添加更多的数据
+        // myData.data.push({
+        //   lat:35,
+        //   lng:-106,
+        //   value:46  
+        // })
+        // heatmapLayer.addData(myData.data);
+
+
+
+
+
+
+
+
+
+        // 创建交互式热图
+        // const cfg = {
+        //     // 如果scaleRadius为true（或预期小半径），则半径应该很小
+        //     "radius": 1,
+        //     "maxOpacity": .8,
+        //     // 根据地图缩放比例缩放半径
+        //     "scaleRadius": true,
+        //     // 如果设置为false，则热图使用全局最大值进行着色
+        //     // 如果激活：使用当前地图边界内的最大数据 
+        //     //   (useLocalExtremas为true时，总会有一个红点)
+        //     "useLocalExtrema": true,
+        //     //数据中的哪个字段名称代表纬度 - 默认为“lat”"
+        //     latField: 'lat',
+        //     // 数据中的哪个字段名称代表经度 - 默认为“lng”
+        //     lngField: 'lng',
+        //     // 数据中的哪个字段名称表示数据值 - 默认值“value”
+        //     valueField: 'value'
+        // }
+        // const map=L.map('mapCon',{
+        //     doubleClickZoom:false
+        // }).setView([35.10418,-106.62987],5);
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // var points=[];
+        // const heat=new HeatmapOverlay(cfg).addTo(map);
+        // // 获取到用户点击的经纬度坐标
+        // function addPoint(e){
+        //     console.log(e);
+        //     heat.addData(e.latlng);
+        // }
+        // map.on('click',addPoint)
+
+
+
+
+        // 创建动画热图
+        // 思路就是通过定时器来进行动画加载
+
+        // var points1 = {
+        //     max: 46,
+        //     data: [{
+        //         lat: 33.5363,
+        //         lng: -117.044,
+        //         value: 1
+        //     }, {
+        //         lat: 33.5608,
+        //         lng: -117.24,
+        //         value: 1
+        //     }]
+        // };
+        // var points2 = {
+        //     max: 46,
+        //     data: [{
+        //         lat: 35.10418,
+        //         lng: -106.62987,
+        //         value: 1
+        //     }, {
+        //         lat: 32,
+        //         lng: -104,
+        //         value: 1
+        //     }]
+        // };
+        // var points3 = {
+        //     max: 46,
+        //     data: [{
+        //         lat: 33,
+        //         lng: -104,
+        //         value: 1
+        //     }, {
+        //         lat: 35,
+        //         lng: -107,
+        //         value: 1
+        //     }]
+        // };
+        // const cfg = {
+        //     // 如果scaleRadius为true（或预期小半径），则半径应该很小
+        //     "radius": 1,
+        //     "maxOpacity": .8,
+        //     // 根据地图缩放比例缩放半径
+        //     "scaleRadius": true,
+        //     // 如果设置为false，则热图使用全局最大值进行着色
+        //     // 如果激活：使用当前地图边界内的最大数据 
+        //     //   (useLocalExtremas为true时，总会有一个红点)
+        //     "useLocalExtrema": true,
+        //     //数据中的哪个字段名称代表纬度 - 默认为“lat”"
+        //     latField: 'lat',
+        //     // 数据中的哪个字段名称代表经度 - 默认为“lng”
+        //     lngField: 'lng',
+        //     // 数据中的哪个字段名称表示数据值 - 默认值“value”
+        //     valueField: 'value'
+        // }
+        // const map = L.map('mapCon', {
+        //     doubleClickZoom: false
+        // }).setView([35.10418, -106.62987], 5);
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // var heat = new HeatmapOverlay(cfg).addTo(map);
+        // heat.addData(points1.data);
+        // var x = 1;
+        // var name = "";
+        // var interval = setInterval(function () {
+        //     run()
+        // }, 1000);
+
+        // function run() {
+        //     name = "points" + x.toString();
+        //     // map.removeLayer(heat);
+        //     // heat = new HeatmapOverlay(cfg).addTo(map);
+        //     console.log(window[name].data);
+        //     heat.addData(window[name].data);
+        //     x++;
+        //     if(x==4){
+        //         x=1;
+        //     }
+        // }
+
+
+
+        // 使用Leaflet创建一个等值区域图
+        // const map = L.map('mapCon', {
+        //     doubleClickZoom: false
+        // }).setView([35.093911, -106.501132], 5);
+        // var info = L.control();
+
+        // info.onAdd = function (map) {
+        //     this._div = L.DomUtil.create('div', 'info');
+        //     this.update();
+        //     return this._div;
+        // };
+
+        // info.update = function (props) {
+        //     this._div.innerHTML = '<h4>jiegiser</h4>' + (props ?
+        //         '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>' :
+        //         'Hover over a state');
+        // };
+
+        // info.addTo(map);
+        // // 用来判断设置颜色
+        // function color(d) {
+        //     // console.log(d);
+        //     return d > 1000 ? '#800026' :
+        //         d > 500 ? '#BD0026' :
+        //         d > 200 ? '#E31A1C' :
+        //         d > 100 ? '#FC4E2A' :
+        //         d > 50 ? '#FD8D3C' :
+        //         d > 20 ? '#FEB24C' :
+        //         d > 10 ? '#FED976' :
+        //         '#FFEDA0';
+        // };
+        // // 用来判断设置样式
+        // function myStyle(feature) {
+        //     // console.log(feature);
+        //     // console.log(feature.properties.density);
+        //     return {
+        //         fillColor: color(feature.properties.density),
+        //         weight: 1,
+        //         opacity: 1,
+        //         color: 'white',
+        //         dashArray: '3',
+        //         fillOpacity: 0.85
+        //     };
+        // }
+        // // 设置鼠标移动高亮显示
+        // function highlightFeature(e) {
+        //     var layer = e.target;
+        //     layer.setStyle({
+        //         weight: 5,
+        //         color: '#666',
+        //         dashArray: '',
+        //         fillOpacity: 0.7
+        //     });
+        //     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        //         layer.bringToFront();
+        //     }
+        //     info.update(layer.feature.properties);
+        // }
+        // var geojson;
+
+        // function resetHighlight(e) {
+        //     GeoJSONLayer.resetStyle(e.target);
+        //     info.update();
+        // }
+
+        // function zoomToFeature(e) {
+        //     map.fitBounds(e.target.getBounds());
+        // }
+
+        // function onEachFeature(feature, layer) {
+        //     layer.on({
+        //         mouseover: highlightFeature,
+        //         mouseout: resetHighlight,
+        //         click: zoomToFeature
+        //     });
+        // }
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // var GeoJSONLayer = L.geoJson(statesData, {
+        //     style: myStyle,
+        //     onEachFeature: onEachFeature
+        // }).addTo(map);
+        // // console.log(GeoJSONLayer);
+
+
+        // // 添加比例尺
+        // var legend = L.control({
+        //     position: 'bottomright'
+        // });
+
+        // legend.onAdd = function (map) {
+        //     var div = L.DomUtil.create('div', 'info legend'),
+        //         grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+        //         labels = [],
+        //         from, to;
+        //     for (var i = 0; i < grades.length; i++) {
+        //         from = grades[i];
+        //         to = grades[i + 1];
+        //         labels.push(
+        //             '<i style="background:' + color(from + 1) + '"></i> ' +
+        //             from + (to ? '&ndash;' + to : '+'));
+        //     }
+        //     div.innerHTML = labels.join('<br>');
+        //     return div;
+        // };
+        // legend.addTo(map);
+
+
+
+
+        // 创建标准化的等值区域图
+        const map = L.map('mapCon', {
+            doubleClickZoom: false
+        }).setView([35.093911, -106.501132], 5);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // 用来判断设置颜色
+        function color(d) {
+            // console.log(d);
+            return d > 1000 ? '#800026' :
+                d > 500 ? '#BD0026' :
+                d > 200 ? '#E31A1C' :
+                d > 100 ? '#FC4E2A' :
+                d > 50 ? '#FD8D3C' :
+                d > 20 ? '#FEB24C' :
+                d > 10 ? '#FED976' :
+                '#FFEDA0';
+        };
+
+        function densitycolor(x) {
+            return x > 0.15 ? '#990000' :
+                x > 0.12 ? '#d7301f' :
+                x > 0.06 ? '#ef6548' :
+                x > 0.03 ? '#fc8d59' :
+                x > 0.01 ? '#fdbb84' :
+                x > 0.005 ? '#fdd49e' :
+                x > 0 ? '#fee8c8' : '#fff7ec';
+        }
+        // 用来判断设置样式
+        function myStyle(feature) {
+            // console.log(feature);
+            // console.log(feature.properties.density);
+            return {
+                fillColor: color(feature.properties.density),
+                weight: 1,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.85
+            };
+        }
+
+        function densityStyle(feature) {
+            return {
+                // 这里通过计算进行赋值颜色，比如我们
+                // fillColor: densitycolor(feature.properties.density / feature.properties
+                //     .ALAND10),
+                fillColor: densitycolor(feature.properties.density / 10),
+                weight: 1,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 1
+            };
+        }
+        var densitylayer = L.geoJson(statesData, {
+            style: densityStyle
+        })
+        var GeoJSONLayer = L.geoJson(statesData, {
+            style: myStyle
+        })
+
+        function total() {
+            GeoJSONLayer.addTo(map);
+            map.removeLayer(densitylayer);
+        }
+
+        function density() {
+            densitylayer.addTo(map);
+            map.removeLayer(GeoJSONLayer);
+        }
+    </script>
+</body>
+
+</html>

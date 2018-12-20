@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>使用Leaflet加载一个地图</title>
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <style>
+        body{
+            border: 0px;
+            padding: 0px;
+        }
+        body,html{
+
+        }
+        #mapCon {
+            width: 1200px;
+            height: 900px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 创建一个div用于加载地图,也就是一个地图容器 -->
+    <p><button onclick="removelayer()">remove</button><button onclick="addLayer()">add</button></p>
+    <div id="mapCon">
+
+    </div>
+    <script>
+        // import circle from './node_modules/leaflet/src/geometry/LineUtil'
+        // 创建一个map对象
+        // let map = L.map('mapCon', { //使用new关键字创建了一个map实例
+        //     center: [35.10418, -106.62987], //这个是设置地图加载后显示的中心，经纬度坐标
+        //     zoom: 13, //这里是设置地图显示的级数，数值越大则地图显示越清晰
+        //     attribution: "Jiegiser"
+        // });
+        // 上面的代码也可以缩减成这样：
+        // let map1=L.map('mapCon').setView([113.41,29.58],11);
+
+        // 加载瓦片地图,这里使用 OpenStreetMap地图
+        // 使用map对象的addTo方法将图层加载到map容器中，进行显示
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+        // 加载其他地图
+        // let usgs =L.tileLayer.wms("http://basemap.nationalmap.gov/ArcGIS/services/USGSImageryTopo/MapServer/WMSServer", {
+        //     layers:'0',
+        //     format: 'image/png',
+        //     transparent: true,
+        //     attribution: "USGS"
+        //     }).addTo(map);
+        // let nexrad =L.tileLayer.wms("http://nowcoast.noaa.gov/wms/com.esri.wms.Esrimap/obs", {
+        //     layers: 'RAS_RIDGE_NEXRAD',
+        //     format: 'image/png',
+        //     transparent: true,
+        //     attribution: "NOAA/NWS"
+        //     }).addTo(map);
+
+        // 在地图中添加一个标记
+        // let myMarker = L.marker(
+        //     [30.584478, 114.34105], //显示的经纬度坐标，位置信息
+        //     {
+        //         title: 'myMarker', //鼠标移动到标记上，进行显示的文本
+        //         alt: 'xxxx',
+        //         draggable: true //是否可以使用鼠标/触摸拖动标记。
+        //     }
+        // ).addTo(map);
+
+        // 画一个折线
+        // let polyline = L.polyline([
+        //     [30.584478, 114.34105],
+        //     [30.575275, 114.383307]
+        // ], {
+        //     color: 'red',
+        //     weight: 8
+        // }).addTo(map);
+        // 画一个矩形，不需要第一个与最后一个坐标相同，会自动进行闭合
+        // let latlngs = [
+        //     [37, -109.05],
+        //     [41, -109.03],
+        //     [41, -102.05],
+        //     [37, -102.04]
+        // ];
+        // let polygon = L.polygon(latlngs, {
+        //     color: 'red', //设置他的边框
+        //     weight: 8, //设置边框的权重
+        //     fillColor: '#eeeeee', //他也支持这样进行定义颜色
+        //     fillOpacity: 1 //设置填充色的透明度，不透明度是0到1之间的值，其中0是100％不透明度和1没有不透明度（固体）。
+
+        // }).addTo(map);
+        // 将地图缩放到所画的矩形
+        // map.fitBounds(polygon.getBounds());
+
+        // 画一个矩形以及圆，可以使用上面的通过定义坐标来进行绘制矩形，但这样会很，麻烦，leaflet内置了绘制矩形与圆的类
+
+        // 绘制一个矩形,里面的坐标是左上角和右下角，
+        // let latlngsR = [
+        //     [35.19738, -106.875],
+        //     [35.10418, -
+        //         106.62987
+        //     ]
+        // ];
+        // let myRectangle = L.rectangle(latlngsR, { //选项与多边形相同，但删除了不透明度
+        //     fillColor: 'blue'
+        // }).addTo(map);
+        // 将地图缩放到所画的矩形
+        // map.fitBounds(myRectangle.getBounds());
+
+
+        // 绘制一个圆：
+        /*    
+        要创建一个圆，需要一个L.circle（）实例，其中心点和a
+        半径（以米为单位）作为参数。可以指定与矩形使用的选项相同的选项，因为circle类继承了path类
+        */
+        // let myCircle = L.circle(
+        //     [35.10418, -106.62987], //圆心坐标
+        //     8046.72, //半径，单位为米
+        //     {
+        //         color: 'red', //圆边界颜色
+        //         weight: 8, //边界权重
+        //         fillColor: 'blue' //填充色
+        //     }
+        // ).addTo(map);
+        //    map.fitBounds(myCircle.getBounds());
+
+        // 绘制多个折线
+        // 第一条折线
+        // let latlngsMl = [
+        //     [
+        //         [35.10418, -106.62987],
+        //         [35.19738, -106.875],
+        //         [35.07946, -106.80634]
+        //     ],
+        //     [
+        //         [35.11654, -106.58318],
+        //         [35.13142, -106.48876],
+        //         [35.07384, -106.52412]
+        //     ]
+        // ];
+        // let multipolyline = L.polyline( //在以前的版本中有multipolyline对象用于画多个折线，但是现在只需要传进多个折线数组，就可以实现在页面中画多个折线
+        //     latlngsMl, //绘制的折线节点坐标
+        //     {
+        //         color: 'red', //折线的颜色
+        //         weight: 8,
+        //     }).addTo(map);
+        // map.fitBounds(multipolyline.getBounds());
+
+        // 绘制一个多边形
+        // 第一个矩形
+        // let latlngsMP1 = [
+        //     [
+        //         [35.10418, -106.62987],
+        //         [35.19738, -106.875],
+        //         [35.07946, -106.80634]
+        //     ],
+        //     [
+        //         [35.11654, -106.58318],
+        //         [35.13142, -106.48876],
+        //         [35.07384, -106.52412]
+        //     ]
+        // ];
+        // let myMultiPolygon =L.polygon(//同样在以前的api通过multiPolygon来创建多个多边形，现在只需要传入一个数组
+        //     latlngsMP1,
+        //     {
+        //         color:'red',//多边形边界的颜色
+        //         weight:8,//边界权重
+        //     }).addTo(map).bindPopup('we are the same layer');//给多边形添加弹出提示，鼠标点击多边形会显示我们输入的内容
+        // map.fitBounds(myMultiPolygon.getBounds());
+
+
+        // 图层组
+        /**
+         如果要创建不同类型的图层组，例如标记带圆圈的图层，可以使用图层组或要素组；   
+         图层组允许向地图添加多个不同类型的图层并将它们作为单个图层进行管理
+        */
+        // let marker = L.marker(
+        //     [35.10418, -106.62987], {
+        //         title: 'this is a marker', //鼠标悬停在标记上，会显示提示信息
+        //         draggable: true
+        //     }).bindPopup('I am a Marker'); //鼠标点击会弹出提示信息
+        // let marker2 = L.marker([35.02381, -106.63811]).bindPopup('I am marker2');
+        // let polyline = L.polyline(
+        //     [
+        //         [35.10418, -106.62987],
+        //         [35.19738, -106.875],
+        //         [35.07946, -106.80634]
+        //     ], {
+        //         color: 'red',
+        //         weight: 8
+        //     }).bindPopup('I am a Polyline');
+        // // 使用图层组处理将图层添加到地图中
+        // let myLayerGroup = L.layerGroup(
+        //     // 下面是一个数组，数组里面存放我们需要在地图中加载的所有图层
+        //     [
+        //         marker,
+        //         polyline
+        //     ]).addTo(map);
+        // // 也可以是使用下面的方法进行将图层加载到图层组中；
+        // myLayerGroup.addLayer(marker2);
+        // // map.fitBounds(myMultiPolygon.getBounds()); //这里需要注意的是图层组没有getBounds方法
+
+        // myLayerGroup.removeLayer(marker2);
+        // // 如果想要从图层组中移除其中一个图层，可以使用removeLayer方法，需要传入的参数为图层名
+        // function removelayer(){
+        //     myLayerGroup.removeLayer(polyline);
+        // } 
+        // // 向图层组中进行添加图层
+        // function addLayer(){
+        //     myLayerGroup.addLayer(polyline);
+        // }
+        /*   
+        如果从组中删除图层，它将不再显示在地图上,因为为图层组调用了addTo（）函数而不是单个图层调用了addTo（）函数。
+        如果要显示图层但不再希望它成为图层的一部分，如前面的代码所示使用removeLayer（）函数，然后
+        通过图层对象的addTo方法将图层添加到地图中。
+        */
+        //    marker2.addTo(map);
+
+
+        /*
+        这里需要注意的是，我们在创建图层组的时候，需要给每一个图层组进行设置样式选项以及弹出窗口，
+        我们不能将样式选项与弹出窗口配置设置到图层组，这样不会显示的，我们可以使用要素图层，来实现
+        这样的效果，Feature Groups
+        */
+
+        /*  
+        Feature Groups类似于图层组，但扩展它以允许鼠标事件和
+        包括bindPopup（）方法。Feature Groups的构造函数与图层组相同：只需将一组图层作为参数传递。
+        */
+        // 声明了一个要素组，要素组是继承了图层组，所以加载图层的方法也是类似的，不过可以通过setStyle与bindPopup方法设置整个要素组的样式
+        // let myfeatuGroup = L.featureGroup(
+        //     [
+        //         marker,
+        //         marker2,
+        //         polyline
+        //     ]).addTo(map).setStyle({
+        //     color: 'purple',
+        //     opacity: .5
+        // }).bindPopup('We have the same pupup because we are a group');
+
+        /**
+         * 这里需要注意的是，要素组是继承了图层组的，图层组的removeLayer以及addLayer方法都是适用于要素组的
+         * 但是我们需要注意到，我们在声明一个polyline要素的时候，设置了他的颜色为red，但是加载到图层组之后，
+         * line显示的并不是red，而是我们通过setStyle设置的颜色，要素组中的所有要素只要有setStyle方法的都会
+         * 继承要素组的设置setStyle，不管你是通过removeLayer之后，在通过addLayer加载进来的，都会继承要素组
+         * setStyle设置的样式的。
+         * 
+         * 还有这里需要注意的是polyline是由setStyle方法的，所以他会继承要素组的setStyle设置，
+         * marker要素是没有setStyle方法的，所以他的颜色等参数是没有改变的；
+         **/
+        // let myMarker1=L.marker([35.19738, -106.875],{
+        //     title:'tip'
+        // });
+        // myMarker1.addTo(map);//将marker图层添加到地图容器中
+        //  制作弹出窗口。弹出窗口提供了一种方法来制作你的图层交互或向用户提供信息
+        // myMarker1.bindPopup('提示信息');//bindPopup方法将要提示的信息作为参数传递；
+        // bindPopup（）方法也允许我们将输入HTML作为内容
+        // myMarker1.bindPopup(`<h1>My Marker</h1><p>This is informatnabout the marker</p>
+        // <ul><li>Info 1</li><li>Info 2</li><li>Info 3</li></ul>`);
+
+        // 还可以创建弹出类的实例，然后将其分配给多个对象
+        // let myPopup = L.popup({
+        //     keepInView: true,
+        //     closeButton: false//设置提示框上是否有关闭按钮，
+        // });
+        // myPopup.setContent(
+        //     `<h1>My Marker</h1><p>This is information about themarker</p>
+        // <ul><li>Info 1</li><li>Info 2</li><li>Info 3</li></ul>`
+        // );
+        // let myMarker1 = L.marker([35.19738, -106.875], {
+        //     title: 'tip'
+        // });
+        // myMarker1.addTo(map); //将marker图层添加到地图容器中
+        // let myMarker2 = L.marker([35.10418, -106.62987], {
+        //     title: 'tip'
+        // });
+        // myMarker2.addTo(map); //将marker图层添加到地图容器中
+        // // 将实例化的弹出层对象绑定到marker标签上；
+        // myMarker1.bindPopup(myPopup);
+        // myMarker2.bindPopup(myPopup);
+        // console.log(map);
+        // console.log(myMarker1);
+        // let lo=map.locationerror();
+        // console.log(lo);
+
+
+      let map=L.map('mapCon');
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+      // 添加获取当前用户的位置 
+
+     //   定义一个函数，当找到用户位置调用该函数
+    //   function foundLocation(e){
+    //       console.log(e);
+    //       var mydata=new Date(e.timestamp);//通过时间戳将时间转换为用户当地的时间，时间戳是自1970年1月1日00:00:00 UTC以来经过的毫秒数。
+    //       console.log('timestamp:'+e.timestamp);//
+    //       console.log('latlng:'+e.latlng);//获取到用户的经纬度
+    //     //   L.marker(e.latlng).addTo(map).bindPopup(mydata.toString());
+    //   };
+    //   定义一个函数，当没有找到用户位置调用该函数
+    //   function notFoundLocation(e){
+    //       console.log(e);
+    //       alert('Unable to find your location. You may need to enableGeolocation.');
+    //   }
+    //   给地图添加locationfound与locationerror监听事件
+    //   map.on('locationfound',foundLocation);
+    //   map.on('locationerror',notFoundLocation);
+    // //   使用locate（）方法设置地图显示的视图
+    //   map.locate({setView:true,maxZoom:10}); 
+
+
+    //   学习地图相关的事件
+    // 给地图添加click事件，只要你点击地图，就会执行该事件
+    // 可以看到on方法的参数，第一个为事件名，第二个为一个匿名函数，也就是事件执行函数
+    // map.on('click',(e)=>{
+    //     console.log(e);
+    //     let coord=e.latlng.toString().split(',');
+    //     console.log(coord);
+    //     let lat=coord[0].split('(');
+    //     console.log(lat);
+    //     let long=coord[1].split(')');
+    //     console.log(long);
+    //     // alert(`You clicked the map at LAT:${lat[1]} and LONG: ${long[0]}`);
+    //     L.marker(e.latlng,{
+    //         title:e.latlng
+    //     }).addTo(map);
+    // });
+
+    // 事件
+    // let mymarker2=L.marker(
+    //     [35.10418, -106.62987],
+    //     {
+    //         title:'MyPoint',
+    //         alt:'The Big I',
+    //         draggable:true
+    //     }).addTo(map);
+    //     console.log(mymarker2);
+    //     mymarker2.bindPopup(`I have beenmoved to: ${String(mymarker2._latlng)}`);
+        // mymarker2.on('dragend',whereAmI);
+
+        let marker3 = L.marker([35.10418, -106.62987]).addTo(map).bindPopup(createPopup('Text as a parameter'));
+        let marker4 = L.marker([35, -106]).addTo(map).bindPopup(createPopup("Different text as a parameter"));
+        function createPopup(x){
+            return L.popup({
+                keepInView:true,
+                closeButton:false
+            }).setContent(x);
+        }
+    </script>
+</body>
+
+</html>
