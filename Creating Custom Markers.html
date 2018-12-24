@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Creating heatmaps with heatmap.js</title>
+
+    <!-- <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="leaflet.awesome-markers.css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" /> -->
+
+
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <!-- 引入Mapbox的icon插件
+    <script src="Leaflet.MakiMarkers.js"></script> -->
+
+    <!-- 引入bootstrap的awsesome图标 -->
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css"> -->
+    <!-- <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="leaflet.awesome-markers.css">
+    <script src="leaflet.awesome-markers.js"></script> -->
+
+
+    <!-- 引入聚集插件 -->
+    <!-- <link rel="stylesheet" href="MarkerCluster.Default.css">
+    <script src="leaflet.markercluster-src.js"></script>
+    <script src="arc.js"></script> -->
+
+
+    <!-- 引入动画插件 -->
+    <script src="bouncemarker.js"></script>
+
+    <!-- 引入animatedmarker.js -->
+    <script src="AnimatedMarker.js"></script>
+    <style>
+        #mapCon {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="start()">start</button>
+    <button onclick="stop()">stop</button>
+    <div id="mapCon">
+
+    </div>
+    <!-- <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+    <script src="leaflet.awesome-markers.js"></script> -->
+    <script>
+        const map = L.map('mapCon').setView([35.10418, -106.62987], 10);
+        // 集群显示
+        // const map = L.map('mapCon').setView([-37.82, 175.24], 9);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+
+        // // 创建自定义的图标
+        // const myIcon=L.icon({
+        //     iconUrl:'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png',//定向到图标图像
+        //     shadowUrl:'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png',//定向到阴影图像
+        //     // 图像的尺寸宽度与高度的格式。
+        //     iconSize:[200,200],
+        //     shadowSize:[200,220],
+        //     // 设置标记和图标触摸地图的点弹出窗口触摸图标的位置
+        //     /*
+        //     标记在水平方向上有一个点
+        //     像素20，所以这将是锚加上图像的高度（以像素为单位）。影子
+        //     在标记点处绘制，因此它的锚点将位于20，其高度将为
+        //     40像素。
+        //     */
+        //     iconAnchor:[20,60],
+        //     shadowAnchor:[20,40],
+        //     popupAnchor:[0,-53]
+        // });
+
+        // // 在标记中使用icon
+        // let marker=L.marker([35.10418,-106.62978],{
+        //     icon:myIcon,
+        //     draggable:true
+        // }).addTo(map).bindPopup('I am a custom marker');
+
+
+        /*
+        
+        扩展L.Icon类以创建自己的标记类。 这允许您可以创建各种颜色的标记，只指定大小和锚点选项一次。
+        */
+        // const myIcon = L.Icon.extend({
+        //     options: {
+        //         shadowUrl: 'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png',
+        //         iconSize: [100, 100],
+        //         shadowSize: [60, 40],
+        //         iconAnchor: [20, 60],
+        //         shadowAnchor: [20, 40],
+        //         popupAnchor: [0, -53]
+        //     }
+        // });
+        // let redIcon=new myIcon({
+        //     iconUrl:'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png'
+        // });
+        // let blueIcon=new myIcon({
+        //     iconUrl:'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png',
+        // });
+        // let marker=L.marker([35.10418,-106.62987],{
+        //     icon:redIcon
+        // }).addTo(map).bindPopup('red marker');
+
+        // let blueMarker=L.marker([35,-106],{
+        //     icon:blueIcon
+        // }).addTo(map).bindPopup('blue marker');
+
+
+
+        // 使用Mapbox Maki markers
+        // 现在的版本需要申请访问令牌，才可以使用此api；
+        // L.MakiMarkers.accessToken = "pk.eyJ1IjoiamllZ2lzZXJnZyIsImEiOiJjanExcmJjMTYxMGlxM3hueG9lZjQ4eng5In0.F4Ia4OCMj8HZV8scGQvSfQ";
+        // let icon=L.MakiMarkers.icon({
+        //     icon:'rocket',
+        //     color:'#0a0',
+        //     size:'1'
+        // });
+        // L.marker([35.10418,-106.62987],{
+        //     icon:icon
+        // }).addTo(map);
+
+
+
+        // 使用bootstrap的awesome图标
+
+        // let redMarker = L.AwesomeMarkers.icon({
+        //     icon: 'coffee',
+        //     markerColor: 'red'
+        // });
+        // L.marker([35.10418, -106.62987], {
+        //     icon: redMarker
+        // }).addTo(map);
+
+        // L.marker([51.941196, 4.512291], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'spinner',
+        //         prefix: 'fa',
+        //         markerColor: 'red',
+        //         spin: true
+        //     })
+        // }).addTo(map);
+        // L.marker([51.927913, 4.521303], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'coffee',
+        //         prefix: 'fa',
+        //         markerColor: 'red',
+        //         iconColor: '#f28f82'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.936063, 4.502077], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'cog',
+        //         prefix: 'fa',
+        //         markerColor: 'purple',
+        //         iconColor: 'black'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.932835, 4.506969], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'glass',
+        //         prefix: 'fa',
+        //         markerColor: 'green'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.930295, 4.515209], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'shopping-cart',
+        //         prefix: 'fa',
+        //         markerColor: 'blue'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.930083, 4.507742], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'info',
+        //         prefix: 'fa',
+        //         markerColor: 'orange'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.930454, 4.527054], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'group',
+        //         prefix: 'fa',
+        //         markerColor: 'darkred'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.929607, 4.527054], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'arrow-right',
+        //         prefix: 'fa',
+        //         markerColor: 'darkblue'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.928919, 4.528856], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'twitter',
+        //         prefix: 'fa',
+        //         markerColor: 'cadetblue'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.930295, 4.530745], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'phone',
+        //         prefix: 'fa',
+        //         markerColor: 'darkpurple'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.925055, 4.512806], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'ambulance',
+        //         prefix: 'fa',
+        //         markerColor: 'darkgreen'
+        //     })
+        // }).addTo(map);
+        // L.marker([51.925902, 4.505768], {
+        //     icon: L.AwesomeMarkers.icon({
+        //         icon: 'medkit',
+        //         prefix: 'fa',
+        //         markerColor: 'darkblue'
+        //     })
+        // }).addTo(map);
+
+
+
+
+
+        // 动画标记聚类功能
+        // const abqIcon = L.Icon.extend({
+        //     options: {
+        //         shasowUrl: 'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png',
+        //         iconSize: [200, 200],
+        //         shadowSize: [100, 100],
+        //         iconAnchor: [25, 64],
+        //         shadowAnchor: [0, 64],
+        //         popupAnchor: [-3, -64]
+        //     }
+        // });
+        // let vase = new abqIcon({
+        //     iconUrl: 'http://pic.yupoo.com/jiegiser/624173d3/93786dc7.png'
+        // });
+        // var markers = L.markerClusterGroup();
+
+        // function popuplate() {
+        //     for (var i = 0; i < addressPoints.length; i++) {
+        //         var a = addressPoints[i];
+        //         var title = a[2];
+        //         // console.log(a[2])
+        //         var marker = L.marker(new L.LatLng(a[0], a[1]), {
+        //             title: title,
+        //             icon: vase
+        //         });
+        //         marker.bindPopup(title);
+        //         markers.addLayer(marker);
+        //     }
+        // }
+        // popuplate();
+        // map.addLayer(markers);
+        /*
+        您可能要设置的其他选项是animateAddingMarkers和maxClusterRadius。 4=
+        动画标记创建一个视觉上有趣的地图，但如果您使用大量数据点，则会降低地图的性能。 
+        这种效果应该在适当的条件下谨慎使用。 调整群集的半径可以创建更大或更小的群集。
+         默认值为80像素。 如果要显示紧密分组的数据，则需要较小的数字，如果要显示分散的数据，
+         则可能需要更大的半径。 在前面的示例中，如果半径设置为5，则标记将占据地图，因为它们由于半径较小而未聚集.
+        
+         markercluster图层包含您可以订阅的事件。 通常，您使用map.on（click，function）在地图上订阅活动。 
+        使用markercluster图层，您可以将一个群集添加到可用的图层事件中，
+        以便它们将应用于markercluster图层，例如markers.on（clusterclick，function）
+        */
+
+
+        // 他也有对应的跟map一样可以通过添加事件，比如：
+        // markers.on('click', function (a) {
+        //     console.log('marker ' + a.layer);
+        // });
+
+        // markers.on('clusterclick', function (a) {
+        //     // a.layer is actually a cluster
+        //     console.log('cluster ' + a.layer.getAllChildMarkers().length);
+        // });
+
+        // 例子，使用原生加载，，我只是重置了每一个标记
+
+        // var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // 		maxZoom: 18,
+        // 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
+        // 	}),
+        // 	latlng = L.latLng(-37.82, 175.24);
+
+        // var map = L.map('mapCon', {center: latlng, zoom: 13, layers: [tiles]});
+
+        // var markers = L.markerClusterGroup();
+
+        // for (var i = 0; i < addressPoints.length; i++) {
+        // 	var a = addressPoints[i];
+        // 	var title = a[2];
+        // 	var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title });
+        // 	marker.bindPopup(title);
+        // 	markers.addLayer(marker);
+        // }
+
+        // map.addLayer(markers);
+
+
+
+
+        // 使用插件动画标记 Leaflet.BounceMarker和Leaflet.AnimatedMarker插件为标记设置动画
+        /*
+        Leaflet.BounceMarker插件没有大量选项来自定义标记或其行为，
+        但它提供了一个简单的动画，在向地图或悬停事件添加标记时非常有用。 
+        */
+        /*
+        创建反弹标记与创建标准Leaflet标记完全相同; 该插件为L.Marker类添加了一个附加选项。 
+        因此，反弹标记具有bounceOnAdd选项，默认为false。 除非另行指定，否则您创建的每个标记都会反弹。
+         对于要反弹的任何标记，请将此选项设置为true。 将标记添加到地图中。
+        */
+        // const marker = new L.Marker([35.10418, -106.62987], {
+        //     bounceOnAdd: true
+        // }).addTo(map);
+        // //   以在跳出标记上指定的唯一其他选项是高度，持续时间和完成后的回调函数
+        // marker.bounce({
+        //     /*
+        //     动画需要运行资源，因此请确保不要创建运行速度太快的动画，否则您会发现标记消失且只有阴影可见。
+        //     在移动设备上使用您的地图，则性能可能比在桌面上慢；
+        //     */
+        //     duration:1000,//持续时间以毫秒为单位
+        //     height:200//以像素微单
+        // },()=>{
+        //     console.log("弹跳完成！");
+        //     // alert('Finished');
+        // });
+
+        // // bounce（）方法适用于悬停事件。 当有许多标记并且它们被紧密分组时，
+        // // 使您正在悬停的那个标记有助于确保您单击正确的标记。 
+        // // 要使标记在悬停事件上跳出，请在鼠标悬停在标记上时订阅该事件并调用函数
+
+        // // 在鼠标悬停的时候绑定弹跳事件
+        // marker.on('mouseover',()=>{
+        //     marker.bounce({
+        //         duration:500,
+        //         height:100
+        //     },()=>{
+        //         console.log("鼠标悬停弹跳结束");
+        //     });
+        // })
+
+
+
+
+        // 让你的标记移动,也就是我们通常做的轨迹回放功能
+        /*
+        使用Leaflet.AnimatedMarker插件，您可以使标记沿折线移动。 当您想引起对路线的注意时，
+        这会派上用场。 沿着路线移动的标记比地图上的线更吸引眼球。
+        */
+
+        /*
+        需要注意的是，如果用户在放大地图时放大
+        动画正在运行，标记将从其路径移动
+        然后试着回来。 禁用地图可能是个好主意
+        缩放直到动画结束。
+        */
+
+
+
+        // 创建折线以表示标记将在其中进行动画处理的路径：
+        const line = L.polyline([
+            [35.10306, -106.58695],
+            [35.1046, -106.60137],
+            [35.10727, -106.61734],
+            [35.1046, -106.63794],
+            [35.10601, -106.69287]
+        ]);
+        // // 创建animatedMarker变量。 标记采用一系列纬度和经度。 要获得它，请使用您创建的行的getLatLngs（）方法：
+        // const animatedMarker = L.animatedMarker(line.getLatLngs(), {
+        //     // 调整他的显示选项,默认路径为蓝色,而且移动很慢
+
+        //     // 下面的设置意思就是在1秒内跑300米
+        //     distance: 10000, // 距离 meters
+        //     interval: 1000, // 间隔选项设置标记沿线传播的速率l单位为毫秒
+        //     // 默认情况下，autoStart选项设置为true。 如果将其设置为false，则可以在准备好时在标记上调用start（）方法。
+        //     // 下面通过按钮来开始暂停标记的移动
+        //     autoStart:false
+        // });
+        // // 将动画标记图层添加到地图中。
+        // map.addLayer(line);
+        // map.addLayer(animatedMarker);
+
+        // /*
+        // 在用户单击“开始”按钮之前，标记不会移动。 当用户单击“停止”按钮时，标记不会立即停止。 动画沿折线的每个片段发生。 
+        // 当标记到达段的端点时，它将停止并且不会恢复，直到用户再次单击“开始
+        // */
+
+        function start() {
+            console.log('开始')
+            animatedMarker.start();
+
+        }
+
+        function stop() {
+            console.log("停止");
+            animatedMarker.stop();
+        }
+
+
+        //  下面是一个综合的例子，使用反弹插件以及路径追踪实现
+
+        const b = new L.Marker([35.10601, -106.69278], {
+            bounceOnAdd: true
+        });
+        var animatedMarker = L.animatedMarker(line.getLatLngs(), {
+            autoStart: false,
+            distance: 10000,
+            interval: 1000,
+            onEnd:end
+        });
+        function end(){
+            b.addTo(map);
+                b.bounce({
+                    duration: 1000,
+                    height: 100
+                }, () => {
+                    map.removeLayer(b);
+                });
+                map.removeLayer(animatedMarker); 
+                setTimeout('bye()', 1000);
+        }
+        map.addLayer(line);
+        map.addLayer(animatedMarker);
+        function bye() {
+            // map.removeLayer(animatedMarker);
+            // map.addLayer(animatedMarker);
+            start();
+        }
+    </script>
+</body>
+
+</html>
