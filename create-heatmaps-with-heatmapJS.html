@@ -6,24 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Creating heatmaps with heatmap.js</title>
+    <!-- 引入jquery -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <!-- 使用Leaflet脚本以及样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
         crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-        crossorigin=""></script>
+        crossorigin=""></script> -->
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+
     <!-- 引入 heatmap.js和heatmap-Leaflet-->
-    <script src="heatmap.js"></script>
-    <script src="leaflet-heatmap.js"></script>
+    <!-- <script src="heatmap.js"></script>
+    <script src="leaflet-heatmap.js"></script> -->
 
     <!-- 引入data数据 -->
-    <script src="data.js"></script>
+    <!-- <script src="data.js"></script> -->
+
+    <!-- 引入数据可视化脚本 -->
+    <link rel="stylesheet" href="dvf.css">
+    <script src="leaflet-dvf.js"></script>
+    <script src="leaflet-dvf.markers.js"></script>
     <style>
         #mapCon {
             width: 800px;
             height: 500px;
         }
 
-        .info {
+        /* .info {
             padding: 6px 8px;
             font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
@@ -49,7 +60,7 @@
             float: left;
             margin-right: 8px;
             opacity: 0.7;
-        }
+        } */
 
         /* .leaflet-container {
             background: rgba(0, 0, 0, .8) !important;
@@ -60,6 +71,11 @@
 <body>
     <button onclick="total()">Total</button>
     <button onclick="density()">Water/Land</button>
+    <div>
+        在本章中，您学习了如何将自定义标记添加到Leaflet贴图中。 您现在可以绘制自己的标记或使用预先存在的图像。 
+        您还可以使用插件从Twitter，Font Awesome和Mapbox加载标记。 最后，您现在知道如何创建条形图和饼图标记，
+        以标记的形式显示数据。 在这一点上，您已经获得了足够的Leaflet知识，可以构建几乎任何您能想到的地图风格。
+    </div>
     <div id="mapCon">
 
     </div>
@@ -358,74 +374,190 @@
 
 
         // 创建标准化的等值区域图
+        // const map = L.map('mapCon', {
+        //     doubleClickZoom: false
+        // }).setView([35.093911, -106.501132], 5);
+        // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // // 用来判断设置颜色
+        // function color(d) {
+        //     // console.log(d);
+        //     return d > 1000 ? '#800026' :
+        //         d > 500 ? '#BD0026' :
+        //         d > 200 ? '#E31A1C' :
+        //         d > 100 ? '#FC4E2A' :
+        //         d > 50 ? '#FD8D3C' :
+        //         d > 20 ? '#FEB24C' :
+        //         d > 10 ? '#FED976' :
+        //         '#FFEDA0';
+        // };
+
+        // function densitycolor(x) {
+        //     return x > 0.15 ? '#990000' :
+        //         x > 0.12 ? '#d7301f' :
+        //         x > 0.06 ? '#ef6548' :
+        //         x > 0.03 ? '#fc8d59' :
+        //         x > 0.01 ? '#fdbb84' :
+        //         x > 0.005 ? '#fdd49e' :
+        //         x > 0 ? '#fee8c8' : '#fff7ec';
+        // }
+        // // 用来判断设置样式
+        // function myStyle(feature) {
+        //     // console.log(feature);
+        //     // console.log(feature.properties.density);
+        //     return {
+        //         fillColor: color(feature.properties.density),
+        //         weight: 1,
+        //         opacity: 1,
+        //         color: 'white',
+        //         dashArray: '3',
+        //         fillOpacity: 0.85
+        //     };
+        // }
+
+        // function densityStyle(feature) {
+        //     return {
+        //         // 这里通过计算进行赋值颜色，比如我们计算面积除以人口数，实现人口密度分析等等。。
+        //         // fillColor: densitycolor(feature.properties.density / feature.properties
+        //         //     .ALAND10),
+        //         fillColor: densitycolor(feature.properties.density / 10),
+        //         weight: 1,
+        //         opacity: 1,
+        //         color: 'white',
+        //         fillOpacity: 1
+        //     };
+        // }
+        // var densitylayer = L.geoJson(statesData, {
+        //     style: densityStyle
+        // })
+        // var GeoJSONLayer = L.geoJson(statesData, {
+        //     style: myStyle
+        // })
+
+        // function total() {
+        //     GeoJSONLayer.addTo(map);
+        //     map.removeLayer(densitylayer);
+        // }
+
+        // function density() {
+        //     densitylayer.addTo(map);
+        //     map.removeLayer(GeoJSONLayer);
+        // }
+
+
+
+        // 使用标记进行数据可视化
+
+        /*
+        
+        需要注意的是这个插件在leaflet-0.X版本中可以使用，有时间了自己研究一下在1.X版本中加入
+        https://github.com/humangeo/leaflet-dvf/blob/master/examples/html/manymarkers.html
+        */
         const map = L.map('mapCon', {
             doubleClickZoom: false
-        }).setView([35.093911, -106.501132], 5);
+        }).setView([35, -107], 8);
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
-        // 用来判断设置颜色
-        function color(d) {
-            // console.log(d);
-            return d > 1000 ? '#800026' :
-                d > 500 ? '#BD0026' :
-                d > 200 ? '#E31A1C' :
-                d > 100 ? '#FC4E2A' :
-                d > 50 ? '#FD8D3C' :
-                d > 20 ? '#FEB24C' :
-                d > 10 ? '#FED976' :
-                '#FFEDA0';
+        /*
+        MapMarker选项
+        使用的MapMarker选项如下：
+        •numberOfSides：内孔由边数决定：三角形为三角形，四角形为正方形。 数字越大，它就越接近圆圈。 
+        如果将此选项留空，则默认为圆圈。
+        •rotation 当然，这仅适用于非圆形的形状。
+        •radius：这是标记的大小。
+        •innerRadius：这是中间孔的大小。
+        */
+        // var marker = new L.MapMarker([35.10418, -106.62987], {
+        //     radius: 30,
+        //     fillOpacity: 0.5,
+        //     fillColor: 'orange',
+        //     color: 'purple',
+        //     innerRadius: 7,
+        //     numberOfSides: 4,
+        //     rotation: 10
+        // });
+        // map.addLayer(marker);
+        /*
+        RegularPolygonMarker选项
+        使用的RegularPolygonMarker选项如下：
+        •numberOfSides：这是标记的形状。
+        •rotation：这是标记的方向。 如果您创建一个四边形多边形并将其留空，则它将是一个正方形。 
+        如果添加旋转，则可以使角点指向任何方向。
+        •radius：这是标记的大小。
+        •innerRadius：这是中间孔的大小。
+        */
+        // var polygonmarker = new L.RegularPolygonMarker([35, -106], {
+        //     numberOfSides: 3,
+        //     rotation: 10,
+        //     radius: 10,
+        //     fillColor: 'green',
+        //     fillOpacity: 1,
+        //     opacity: 1,
+        //     weight: 1,
+        //     radius: 30
+        // });
+        // map.addLayer(polygonmarker);
+        /*
+        StarMarker选项
+        使用的StarMarker选项如下：
+        •numberOfPoints：这定义了起始点应该有多少个点
+        •rotation：这是标记的方向
+        •radius：这是标记的大小
+        •innerRadius：这是中间孔的大小
+        */
+        // var star = new L.StarMarker([35, -107], {
+        //     numberOfPoints: 8,
+        //     opacity: 1,
+        //     weight: 2,
+        //     fillOpacity: 0,
+        //     radius: 30
+        // });
+        // map.addLayer(star);
+
+
+
+        // 条形图和饼图标记
+        // 创建饼图时，radius选项允许调整标记的大小：
+        var options = {
+            data: {
+                'data1': 20,
+                'data2': 50,
+                'data3': 10,
+                'data4': 20
+            },
+            chartOptions: {
+                'data1': {
+                    fillColor: 'blue',
+                    minValue: 0,
+                    maxValue: 50,
+                    maxHeight: 30,
+                },
+                'data2': {
+                    fillColor: 'red',
+                    minValue: 0,
+                    maxValue: 50,
+                    maxHeight: 30,
+                },
+                'data3': {
+                    fillColor: 'green',
+                    minValue: 0,
+                    maxValue: 50,
+                    maxHeight: 30,
+                },
+                'data4': {
+                    fillColor: 'yellow',
+                    minValue: 0,
+                    maxValue: 50,
+                    maxHeight: 30,
+                }
+            },
+            weight: 1,
+            color: '#000000',
+            radius: 30,
+            fillOpacity: 1
         };
-
-        function densitycolor(x) {
-            return x > 0.15 ? '#990000' :
-                x > 0.12 ? '#d7301f' :
-                x > 0.06 ? '#ef6548' :
-                x > 0.03 ? '#fc8d59' :
-                x > 0.01 ? '#fdbb84' :
-                x > 0.005 ? '#fdd49e' :
-                x > 0 ? '#fee8c8' : '#fff7ec';
-        }
-        // 用来判断设置样式
-        function myStyle(feature) {
-            // console.log(feature);
-            // console.log(feature.properties.density);
-            return {
-                fillColor: color(feature.properties.density),
-                weight: 1,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.85
-            };
-        }
-
-        function densityStyle(feature) {
-            return {
-                // 这里通过计算进行赋值颜色，比如我们计算面积除以人口数，实现人口密度分析等等。。
-                // fillColor: densitycolor(feature.properties.density / feature.properties
-                //     .ALAND10),
-                fillColor: densitycolor(feature.properties.density / 10),
-                weight: 1,
-                opacity: 1,
-                color: 'white',
-                fillOpacity: 1
-            };
-        }
-        var densitylayer = L.geoJson(statesData, {
-            style: densityStyle
-        })
-        var GeoJSONLayer = L.geoJson(statesData, {
-            style: myStyle
-        })
-
-        function total() {
-            GeoJSONLayer.addTo(map);
-            map.removeLayer(densitylayer);
-        }
-
-        function density() {
-            densitylayer.addTo(map);
-            map.removeLayer(GeoJSONLayer);
-        }
+        const bar=new L.BarChartMarker([35.10418,-106.62987],options);
+        map.addLayer(bar);
+        const pie=new L.PieChartMarker([35,-107],options);
+        map.addLayer(pie);
     </script>
 </body>
 
