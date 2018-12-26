@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalbale=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Creating heatmaps with heatmap.js</title>
+    <!-- 引入jquery -->
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script> -->
+    <!-- 使用Leaflet脚本以及样式 -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" -->
+    <!-- crossorigin="" /> -->
+    <!-- <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" -->
+    <!-- crossorigin=""></script> -->
+
+
+    <!-- 引入添加shapefile所需要的脚本 -->
+    <!-- <script src="shp.js"></script> -->
+    <!-- <script src="leaflet.shpfile.js"></script> -->
+
+    <!-- 引入esri热力图插件 -->
+    <!-- <script src="https://unpkg.com/leaflet.heat@0.2.0"></script> -->
+    <!-- 引入 ESRI-leaflet文件-->
+    <!-- <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script> -->
+    <!-- <script src="https://unpkg.com/esri-leaflet-heatmap@2.0.0"></script> -->
+
+    <!-- Load libraries from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0-rc.3"></script>
+
+    <script src="https://unpkg.com/leaflet.heat@0.2.0"></script>
+
+    <!-- Esri Leaflet and Esri Leaflet Heatmap -->
+    <script src="https://unpkg.com/esri-leaflet@2.0.2"></script>
+    <script src="https://unpkg.com/esri-leaflet-heatmap@2.0.0"></script>
+
+    <style>
+        #mapCon {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <b>知识点</b>
+        <hr>
+        <p>•ESRI底图
+            •使用shapefile
+            •显示动态地图图层
+            •热图
+            •地理编码和反向地理编码
+            •查询图层
+        </p>
+    </div>
+    <div id="mapCon">
+
+    </div>
+    <script>
+        // const map = L.map('mapCon').setView([42, -72], 8);
+        // const layer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        /*
+        ESRI底图图层继承自Leaflet L.TileLayer类，因此，允许使用任何其他Leaflet L.TileLayer可用的所有选项，方法和事件
+        */
+        // 这样就加载了一个gray主题地图
+        // const gray=L.esri.basemapLayer('Gray').addTo(map);
+        //  构建移动地图时非常有用的一个选项是detectRetina选项。 要使用此选项，只需在底图名称后面传递它，如下面的代码所示：
+        // const gray=L.esri.basemapLayer('Gray',{
+        //     detectRetina:true
+        // }).addTo(map);
+
+
+        //加载其他地图
+        // const Topo=L.esri.basemapLayer('Topographic').addTo(map);
+
+        // 可以设置图层的属性
+        // gray.setOpacity(.75);
+        // gray.on('load',()=>{
+        //     // alert('ESRI Basemap Loaded');
+        //     console.log('load')       
+        // })
+
+        // 添加标注（注记）
+        // const grayLabel=L.esri.basemapLayer('GrayLabels').addTo(map);
+
+
+
+        // 添加shapefile
+        // 使用插件：https://github.com/calvinmetcalf/leaflet.shapefile
+        // 引入shp.js跟leaflet.shfile.js
+        // const shpfile = new L.Shapefile('maSP.zip', {
+        //     // 他也是继承了path类的选项与方法，可以改变显示的样式：
+        //     style:(feature)=>{
+        //         return{
+        //             color:'black',
+        //             fillColor:'red',
+        //             fillOpacity:.75
+        //         }
+        //     },
+        //     //以下代码显示如何向shapefile图层添加弹出窗口
+        //     onEachFeature: (feature, layer) => {
+
+        //         // console.log(feature);
+        //         // layer.bindPopup("<a href='"+feature.properties.WEBPAGE+"'>Page</a><br><a href='"+feature.properties.PICTURE+"'>Image</a>");
+
+        //         // 弹出所有要素的属性
+        //         let holder = [];
+        //         for (let key in feature.properties) {
+        //             holder.push(key + ": " + feature.properties[key] + "<br>");
+        //             let popupContent = holder.join("");
+        //             layer.bindPopup(popupContent);
+        //         }
+        //     }
+        // });
+        // shpfile.addTo(map);
+
+
+
+        // 添加esri其他地图服务
+        // const art = L.esri.dynamicMapLayer(
+        //     // 这里需要注意的是，在以前的版本直接输入url可以，但是现在需要以选项的方法进行显示
+        //     {
+        //         url: "http://192.168.27.180:6080/arcgis/rest/services/SampleWorldCities/MapServer",
+        //     }).addTo(map);
+        // art.bindPopup(function (err, feature) {
+        //     return feature.features[0].properties.TITLE + "<br> by: <b> " + feature.features[0].properties.ARTIST;
+        // });
+
+
+        // 加载esri的热力图，需要引用另一个ESRI文件esri-leaflet-heatmap-feature-layer.js。 ESRI热图图层需要leaflet-heat.js
+        // https://github.com/Esri/esri-leaflet-heatmap
+
+        // const map = L.map('mapCon').setView([40.706, -73.926], 14);
+
+        // L.esri.basemapLayer('Gray').addTo(map);
+        // L.esri.Heat.featureLayer({
+        //     url: 'https://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Graffiti_Reports/FeatureServer/0',
+        //     radius: 12
+        // }).addTo(map);
+
+        
+    </script>
+</body>
+
+</html>
