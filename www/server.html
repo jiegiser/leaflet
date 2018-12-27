@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>服务</title>
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <!-- 引入jquery -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        #mapCon {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        您将学习如何使用Leaflet.js构建应用程序
+        三种流行的编程框架：Node.js，Python和C＃。在Node.js和
+        Python，您将构建一个服务器来呈现您的网页并允许AJAX调用
+        显示其他数据。在最后一个示例中，使用C＃，您将构建一个桌面
+        将网页嵌入表单的Windows应用程序，连接到MongoDB，
+        并使用常规搜索和空间搜索来检索数据。
+    </div>
+    <div id='mapCon'></div>
+    <script>
+        // 使用Node.js构建Leaflet应用程序
+        // var result = 'SELECT * from MyTable';
+        // document.getElementById['results'].innerHTML = result;
+
+        // function showResults() {
+        //     document.getElementById['results'].innerHTML = result;
+        // };
+        // var result = query('SELECT * from MyTable', showResults);
+        // doWhateverElseYouNeed();
+
+
+
+
+        const map = L.map('mapCon').setView([42, -72], 8);
+        const layer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        // L.marker([42,-72]).addTo(map).bindPopup('一个标记');
+        // 使用ajax请求来实现从服务器端请求一个点坐标，在页面添加一个标记
+        map.on('click', function () {
+            // var xhReq = new XMLHttpRequest();
+            // xhReq.open("GET", "http://localhost:3000/getpoints", true);
+            // xhReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            // xhReq.send(null);
+            // if ((xhReq.status >= 200 && xhReq.status < 300) || xhReq.status == 304) {
+            //     var serverResponse = xhReq.responseText;
+            //     // console.log(serverResponse);
+            //     var d = JSON.stringify(serverResponse);
+            //     console.log(serverResponse);
+            //     L.marker([d[0].lat, d[0].long]).addTo(map).bindPopup("通过向nodeJS发送ajax请求返回的点！").openPopup();
+            // }
+            $.get("http://localhost:3000/getpoints",function(res){
+                var ress=res[0];
+                L.marker([ress.lat, ress.long]).addTo(map).bindPopup("通过向nodeJS发送ajax请求返回的点！").openPopup();
+            });
+        })
+    </script>
+</body>
+
+</html>
