@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Creating heatmaps with heatmap.js</title>
     <!-- 引入jquery -->
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script> -->
     <!-- 使用Leaflet脚本以及样式 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
         crossorigin="" />
@@ -22,7 +22,7 @@
     <!-- 引入esri热力图插件 -->
     <!-- <script src="https://unpkg.com/leaflet.heat@0.2.0"></script> -->
     <!-- 引入 ESRI-leaflet文件-->
-    <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
+    <!-- <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script> -->
     <!-- <script src="https://unpkg.com/esri-leaflet-heatmap@2.0.0"></script> -->
 
     <!-- Load libraries from CDN -->
@@ -38,12 +38,39 @@
 
     <!-- 加载geocoder插件 -->
     <!-- Esri Leaflet Geocoder -->
-    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css">
-    <script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+    <!-- <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css">
+    <script src="https://unpkg.com/esri-leaflet-geocoder"></script> -->
+
+
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js" integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
+        crossorigin=""></script>
+
+
+    <!-- Load Esri Leaflet Geocoder from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.css"
+        integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+        crossorigin="">
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js" integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A=="
+        crossorigin=""></script>
     <style>
         #mapCon {
             width: 800px;
             height: 500px;
+        }
+
+        #query {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: white;
+            padding: 1em;
+        }
+
+        #query select {
+            font-size: 16px;
         }
     </style>
 </head>
@@ -59,7 +86,18 @@
             •地理编码和反向地理编码
             •查询图层
         </p>
+        <hr>
+        <p>在本章中，您学习了如何使用最常用的地理数据文件格式：shapefile。 您还学习了如何使用esri-leaflet插件连接到ESRI服务并添加底图以及其他五种ESRI图层类型。 您之前已经了解过热图，但在本章中，您还学习了如何使用ESRI服务并将其添加为热图。 您学习了如何将地址地理编码为地图，以及如何将点地理编码为街道地址。 最后，您学习了如何首先按属性然后按位置查询ESRI服务</p>
     </div>
+    <!-- 这里是设置属性查询 -->
+    <!-- <label for="">
+        status
+        <select name="" id="caseStatus">
+            <option value="">Clear Screen</option>
+            <option value="Open">Open</option>
+            <option value="Closed">Closed</option>
+        </select>
+    </label> -->
     <div id="mapCon">
 
     </div>
@@ -137,8 +175,8 @@
         // 加载esri的热力图，需要引用另一个ESRI文件esri-leaflet-heatmap-feature-layer.js。 ESRI热图图层需要leaflet-heat.js
         // https://github.com/Esri/esri-leaflet-heatmap
 
-        const map = L.map('mapCon').setView([40.706, -73.926], 14);
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        const map = L.map('mapCon').setView([60, 160], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         // L.esri.basemapLayer('Gray').addTo(map);
         // L.esri.Heat.featureLayer({
         //     url: 'https://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Graffiti_Reports/FeatureServer/0',
@@ -148,10 +186,12 @@
 
 
         // 地理解析功能
-        const searchControl = new L.esri.Geocoding.geosearch().addTo(map);
+
+        //添加地理查询按钮 
+        // const searchControl = new L.esri.Geocoding.geosearch().addTo(map);
         // // 放置查询结果的图层
-        const results = new L.layerGroup().addTo(map);
-        // // 订阅结果事件，添加标记
+        // const results = new L.layerGroup().addTo(map);
+        // // 监听返回结果事件，将查询到的结果通过添加标记显示在地图上
         // searchControl.on('results', (data) => {
         //     results.clearLayers();
         //     console.log(data);
@@ -161,17 +201,110 @@
         // });
 
 
-        var x = location.search;
-        var y = x.split("=");
-        var temp = y[1];
-        var address = decodeURIComponent(temp);
-        var geocodeService = new L.esri.Geocoding.geosearch();
-        console.log(geocodeService)
-        geocodeService.geocodeSuggestion(address, {}, function (error,
-            result) {
-            L.marker(result[0].latlng).addTo(map);
-            map.setView(result[0].latlng, 8);
+
+
+        // 下面是通过用户输入url地址,来获取url中传递的参数,来进行查询
+
+        // 下面是通过url获取参数
+        // let x = location.search;//他会获取到url中问号后面传递的参数
+        // console.log(x);
+        // let y = x.split("=");//将获取到的参数拆分为以=进行分割
+        // console.log(y);
+        // let temp = y[1];//返回数组的第二个元素----比如返回%20
+        // let address = decodeURIComponent(temp);//删除url中的空格
+        // console.log(address);
+        // const geocodeService = L.esri.Geocoding.geosearch();
+        // // var geocodeService = new L.esri.Services.Geocoding();
+        // console.log(geocodeService)
+        // geocodeService.geocodeSuggestion(address, {}, function (error,
+        //     result) {
+        //     L.marker(result[0].latlng).addTo(map);
+        //     map.setView(result[0].latlng, 8);
+        // });
+
+
+
+
+        // 反向地理编码
+        // const searchControl =L.esri.Geocoding.geocodeService();
+        // map.on('click',function(e){
+        //     // 使用reverse方法传递点击的经纬度坐标，然后在回调函数中，将返回的结果以标记进行显示
+        //     searchControl.reverse().latlng(e.latlng).run(function(error,result){
+        //         console.log(result);
+        //         // 地址是存储在result.address，如果只要显示一个点，可以使用removeLayer移除上一次显示的标记
+        //         L.marker(result.latlng).addTo(map).bindPopup(result.address.Match_addr).openPopup();
+        //     })
+        // });
+
+
+        // 属性查询
+        /*
+        在使用服务时，通常会加载整个图层。 有时，您可能只需要图层数据的子集。 使用查询将允许您仅加载您感兴趣的子集。
+        在此示例中，您将查询打开和关闭案例的涂鸦层
+        */
+        // const graffiti = L.esri.featureLayer({
+        //     url: 'http://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Graffiti_Reports/FeatureServer/0',
+        //     pointToLayer: (geojson, latlng, feature) => {
+        //         return L.marker(latlng);
+        //     }
+        // }).addTo(map);
+        // var popupTemplate =
+        //     // 这个将返回对应的属性的模板，就跟vue一样，插值表达式，
+        //     "<h3>Details:OBJECTID: {OBJECTID} <br> CreatedDate: {CreatedDate} <br> ClosedDate: {ClosedDate} <br> State: {Status}";
+        // graffiti.bindPopup(function (feature) {
+        //     console.log(feature.feature.properties);
+        //     return L.Util.template(popupTemplate, feature.feature.properties)
+        // });
+        // const caseStatus = document.querySelector('#caseStatus');
+        // console.log(caseStatus);
+
+        // caseStatus.addEventListener('change', function () {
+        //     console.log("进行选择");
+        //     //这里是根据属性进行查询
+        //     graffiti.setWhere('Status="' + caseStatus.value + '"');
+        // });
+
+
+
+        // 通过邻近查询，根据鼠标点击的位置查询图层--------也就会最邻近设施点查询
+        const graffiti = L.esri.featureLayer({
+            url: 'http://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Graffiti_Reports/FeatureServer/0',
+            pointToLayer: function (geojson, latlng) {
+                // 返回一个圆形标记
+                return L.circleMarker(latlng);
+            }
+        }).addTo(map);
+        const popupTemplate =
+            "<h3>属性：</h3><br><h3>OBJECTID: {OBJECTID} <br> CreatedDate: {CreatedDate} <br> ClosedDate: {ClosedDate} <br> State: {Status}</h3>";
+        graffiti.bindPopup(function (feature) {
+            return L.Util.template(popupTemplate, feature.feature.properties);
         });
+        const query = L.esri.query({
+            url:'http://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Graffiti_Reports/FeatureServer/0'
+        });
+        map.on('click', runQuery);
+        // 在地图上点击，后执行函数
+        function runQuery(e) {
+            // console.log(e);
+            // 使用nearby（）方法执行查询，传递鼠标点击的纬度和经度，距离为800米（半英里）; 
+            // 他会返回查询到结果的id
+            graffiti.query().nearby(e.latlng, 800).ids(function (error, ids) {
+                // 不是对临近设置为蓝色
+                graffiti.setStyle(function () {
+                    return {
+                        color: "blue"
+                    };
+                });
+                // 如果查找到最邻近设置，进行遍历，将它的颜色变为绿色
+                //可以在这里通过实现将获取到最邻近设施进行通过线连接起来，创建折线或者path类
+                for (var i = 0; i < ids.length; i++) {
+                    // console.log(ids[i]);
+                    graffiti.setFeatureStyle(ids[i], {
+                        color: "green"
+                    });
+                }
+            });
+        }
     </script>
 </body>
 
