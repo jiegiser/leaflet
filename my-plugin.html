@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>扩展自己的插件</title>
+    <!-- 使用Leaflet脚本以及样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+    <script src="./L.KittenLayer.js"></script>
+    <style>
+        #mapCon {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p>简单的扩展自己的插件，首先从简单开始，比如说扩展一个L.TileLayer.getTileUrl()。无论何时当新的tile需要知道加载哪个图时就会在L.TileLayer内部调用该方法。
+            通过创建L.TileLayer的子类和重写getTileUrl()方法，</p><br>
+        <p>让我们用一个定制的L.TileLayer为例进行说明，该L.TileLayer可以展示随机的小猫图片</p>
+    </div>
+    <hr>
+    <div id="mapCon"></div>
+    <script>
+        const map = L.map('mapCon').setView([42, -72], 8);
+        // const layer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+        // L.TileLayer.Kitten = L.TileLayer.extend({
+        //     getTileUrl(coords) {
+        //         let i = Math.ceil(Math.random() * 4);
+        //         return `http://placekitten.com/256/256?image=${i}`;
+        //     },
+        //     getAttribution() {
+        //         return `<a href='http://placekitten.com/attribution.html'>PlaceKitten</a>`;
+        //     }
+        // });
+        // console.log(L.TileLayer);
+        // L.tileLayer.Kitten = () => {
+        //     return new L.TileLayer.Kitten();
+        // }
+        // L.tileLayer.Kitten().addTo(map);
+
+        // 这样我们就扩展了一个自己的一个图层
+        // const kitt=new L.TileLayer.Kitten();
+        // kitt.addTo(map);
+
+
+        // 然后我们需要分离我们的插件代码新建一个L.KittenLayer.js文件
+        // 然后在script中引入我们的js脚本，
+
+
+        // 使用我们扩展的第二个
+        // const debugCoords=new L.GridLayer.DebugCoords({
+        //     // tileSize:L.point(100,200) //可以通过这样设置格网的大小
+        // });
+        // map.addLayer(debugCoords);
+
+
+
+        // 使用扩展的第三个
+        // const canvasCir=new L.GridLayer.CanvasCircles();
+        // map.addLayer(canvasCir);
+
+
+
+
+
+        // 一个扩展的基本例子
+        // var MyDemoClass = L.Class.extend({
+        //     // A property with initial value = 42
+        //     myDemoProperty: 42,
+        //     // A method 
+        //     myDemoMethod() {
+        //         return this.myDemoProperty;
+        //     }
+        // });
+
+
+        /*
+        如果已定义类，则可以重新定义现有属性/方法，或者可以使用.include()以下方法添加新属性/方法：
+        */
+        // MyDemoClass.include({
+        //    添加一个新的属性
+        // _myPrivateProperty: 78,
+        // myDemoMethod2() {
+        // return this._myPrivateProperty;
+        // }
+        // });
+        // 
+        // var myDemoInstance = new MyDemoClass();
+        // This will output "42" to the development console
+        // console.log(myDemoInstance.myDemoMethod());
+        // console.log(myDemoInstance.myDemoMethod2());
+
+        /*
+         在OOP中，类会拥有一个构造器方法。在Leaflet中的L.Class中，构造器方法被命名为initialize。
+         如果你的类拥有一些特定的选项（options）,可以在构造器中使用L.setOptions()方法来初始化选项（options）。这个函数可以将提供的选项和类中的默认选项合并。
+        */
+        // const MyBoxClass = L.Class.extend({
+        //     options: {
+        //         width: 1,
+        //         height: 1
+        //     },
+        //     initialize(name, options) {
+        //         this.name = name;
+        //         L.setOptions(this.options);
+        //     }
+        // });
+        // let instace = new MyBoxClass('jiegiser', {
+        //     width: 10
+        // });
+        // console.log(instace.name);
+        // console.log(instace.options.width);
+        // console.log(instace.options.height);
+
+        /*
+         Leaflet使用特殊的方式处理选项属性（options）：子类会继承父类中的选项属性（options）
+        */
+
+
+        // const MuCubeClass = MyBoxClass.extend({
+        //     options: {
+        //         depth: 5,
+        //     }
+        // });
+
+
+
+        /*
+        子类执行父类构造器和自身的构造器也很常见的行为。在Leafleet中可以使用L.Class.addInitHook()实现。
+        这个方法可以在类的initialize()方法刚刚执行之后“挂住”初始化函数;
+
+        在initialize()执行（调用setOpstions()的方法）之后会执行该函数。
+        这就意味着this.options在hook执行之前已经存在并赋值了。
+        
+        */
+        // MyBoxClass.addInitHook(function () {
+        //     this._area = this.options.width * this.options.length;
+        // });
+        // const instace2 = new MuCubeClass('jieouba');
+        // console.log(instace2);
+        // console.log(instace2.options.height);
+        // console.log(instace2._area);
+        /*
+        addInitHook有一种可选的语法，可以使用方法名称和方法中的参数作为addInitHook的参数。
+        */
+        // MyCubeClass.include({
+        //     _calculateVolume: function (arg1, arg2) {
+        //         this._volume = this.options.width * this.options.length * this.options.depth;
+        //     }
+        // });
+        // MyCubeClass.addInitHook('_calculateVolume', argValue1, argValue2);
+
+
+
+
+
+        /*
+        通过访问父类的原型可以调用父类中的方法，使用Function.call(...)可以实现。比如，可以在L.FeatureGroup的代码中看到：
+
+        调用父类的构造器可以使用相同的方式，使用如下的方式替代：ParrentClass.prototype.initialize.call(this,...)。
+        */
+        // L.FeatureGroup = L.LayerGroup.extend({
+
+        //     addLayer: function (layer) {
+        //         L.LayerGroup.prototype.addLayer.call(this, layer);
+        //     },
+        //     removeLayer: function (layer) {
+        //         L.LayerGroup.prototype.removeLayer.call(this, layer);
+        //     }
+        // });
+
+
+        /*
+        大多数的Leaflet类拥有对应的工厂方法。工厂方法拥有和对应类相同的名字，只不过类使用大驼峰风格而工厂方法使用小驼峰风格
+        */
+
+        // function myBoxClass(name, options) {
+        //     return new MyBoxClass(name, options);
+        // }
+    </script>
+</body>
+
+</html>
